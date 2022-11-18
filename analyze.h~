@@ -1,9 +1,8 @@
 #ifndef ANALYZE_H
 #define ANALYZE_H
-
+#include <stdbool.h>
 #define SIZE_START 512
 #define ITERATIONS 4
-
 // algorithm_t defines different algorithms
 typedef enum {
 	bubble_sort_t,
@@ -29,5 +28,52 @@ typedef struct {
 // benchmark benchmarks an algorithm a for a specific case c, writing n results
 // to the result buffer buf
 void benchmark(const algorithm_t a, const case_t c, result_t *buf, int n);
+//Functions for generating different arrays
+//Takes a pointer to an array and the number of 
+//elements to put in said array.
+//Returns a pointer to the array
+//
+typedef void (*func_pointer_void)(int *a, int n);
+//Cannot use this typedef here for some reason? Works fine in the c file
+typedef bool (*func_pointer_bool)(const int *a, int n, int v);
+//Generates an array of random numbers
+int* generate_random(int* arr, int size);
+//Generates an array in ascending order
+int* generate_sorted(int* arr, int size);
+//Generates an array in descending order
+int* generate_unsorted(int* arr, int size);
+//Takes an array pointer, size of the array, a case and an algorithm constant
+//Determines which one of the generation functions should be called
+//Calls the correct generation function and returns a pointer to the array
+int* which_arr(int* arr, int size, const case_t c, const algorithm_t a); 
+//Takes the size n, the time for running the algorithm total and a case constant
+//Prints the results, shows different big O constants depending on the case
+//For example worst case shows O(n^2) but not O(n) since none of the functions
+//has O(n) as its worst case
+void print(int n, double total, const case_t c);
+//Function for measuring time taken to execute a function
+//Takes number of times to repeat measurement repeat, a function pointer to correct algorithm
+//and case/algo constants
+//returns the average of the total time taken in seconds
+int timer_sort(int repeat, func_pointer_void f, const case_t c, const algorithm_t a);
+//Same as timer_sort but with a few extra things for search algorithms
+//Determines the element to search for and passes that to the search algo before 
+//timing it
+//Cannot use func_pointer_bool here for some reason
+//int timer_search(const case_t c, const algorithm_t a, int repeat, func_pointer_bool x);
+//Functions for determining which case and algorithm to test
+//Takes algo and case constants as parameters
+//Assigns the specified function a function pointer and passes that to the 
+//correct timer function
+void worst_case(const algorithm_t a, const case_t c); 
+void average_case(const algorithm_t a, const case_t c); 
+void best_case(const algorithm_t a, const case_t c); 
+//Special case for search algorithms since they use a different 
+//function pointer and always want sorted arrays
+void search_case(const case_t c, const algorithm_t a); 
+//Determines what "case" function to run
+//Takes case/algo constants and size (which is never use
+void determine_case(const case_t c, const algorithm_t a); 
+
 
 #endif
